@@ -1,0 +1,9 @@
+[project]
+name = "fbt-parser"
+version = "0.1.0"
+description = "firebird trace parser"
+requires-python = ">=3.12"
+authors = [
+    {name = "deliciousNesquik", email = "byte.in4matic@gmail.com"}
+]
+dependencies = []

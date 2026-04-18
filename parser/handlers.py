@@ -327,7 +327,6 @@ class EventHandler:
         result = {
             "attachment": attachment,
             "transaction": transaction,
-            "statement_id": None,
             "trigger_name": trigger_name,
             "table": table,
             "timing": timing,

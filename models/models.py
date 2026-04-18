@@ -38,7 +38,6 @@ class StatementEventBase(EventBase):
 class ProcedureEventBase(EventBase):
     attachment: AttachmentInfo
     transaction: TransactionInfo
-    statement_id: int
     procedure_name: str
     params: List[SqlParam]
 
@@ -47,7 +46,6 @@ class ProcedureEventBase(EventBase):
 class TriggerEventBase(EventBase):
     attachment: AttachmentInfo
     transaction: TransactionInfo
-    statement_id: int
     trigger_name: str
     table: str
     timing: str

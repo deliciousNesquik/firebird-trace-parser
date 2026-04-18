@@ -291,7 +291,6 @@ class EventHandler:
         result = {
             "attachment": attachment,
             "transaction": transaction,
-            "statement_id": None,
             "procedure_name": procedure_name,
             "params": params,
         }

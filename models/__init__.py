@@ -16,13 +16,10 @@ from models.models import (
     TraceFinishEvent,
     AttachDatabaseEvent,
     DetachDatabaseEvent,
-    StatementEventBase,
     StatementStartEvent,
     StatementFinishEvent,
-    ProcedureEventBase,
     ProcedureStartEvent,
     ProcedureFinishEvent,
-    TriggerEventBase,
     TriggerStartEvent,
     TriggerFinishEvent,
 )
@@ -37,17 +34,19 @@ __all__ = [
     "PerformanceInfo",
     "PerfomanceTableItem",
     "PerfomanceTable",
+    
     "TraceInitEvent",
     "TraceFinishEvent",
+    
     "AttachDatabaseEvent",
     "DetachDatabaseEvent",
-    "StatementEventBase",
+    
     "StatementStartEvent",
     "StatementFinishEvent",
-    "ProcedureEventBase",
+    
     "ProcedureStartEvent",
     "ProcedureFinishEvent",
-    "TriggerEventBase",
+    
     "TriggerStartEvent",
     "TriggerFinishEvent",
 ]

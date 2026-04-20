@@ -1,7 +1,7 @@
 [project]
-name = "fbt-parser"
+name = "firebird-trace-parser"
 version = "0.1.0"
-description = "firebird trace parser"
+description = "библиотека для обработки логов трассировки Firebird. Парсер преобразует текстовые логи в структурированные Python объекты, что позволяет проводить анализ производительности, отслеживать SQL-запросы и выявлять узкие места в работе с БД. "
 requires-python = ">=3.12"
 authors = [
     {name = "deliciousNesquik", email = "byte.in4matic@gmail.com"}

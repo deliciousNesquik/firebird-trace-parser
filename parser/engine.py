@@ -2,8 +2,9 @@
 
 from pathlib import Path
 from typing import List, Optional, Union, Iterator
+
+import regex
 from models import *
-from matcher import *
 from parser.handlers import EventHandler
 
 
@@ -12,24 +13,29 @@ class TraceLogParser:
     Парсер trace логов Firebird.
     
     Примеры использования:
-        >>> parser = TraceLogParser()
+        >>> # Без пользовательского обработчика
+        >>> rules = matcher.load_rules('/path/to/rules.toml')
+        >>> parser = TraceLogParser(rules=rules)
         >>> events = parser.parse_file("trace.log")
         >>> for event in events:
         ...     print(event.event_type)
         
         >>> # С пользовательским обработчиком
+        >>> ...
         >>> handler = MyCustomHandler()
-        >>> parser = TraceLogParser(handler=handler)
+        >>> parser = TraceLogParser(rules=rules, handler=handler)
         >>> parser.parse_file("trace.log")
     """
     
-    def __init__(self, handler: Optional[EventHandler] = None):
+    def __init__(self, rules: dict[str, regex.Pattern], handler: Optional[EventHandler] = None):
         """
         Инициализация парсера.
         
         Args:
+            rules: Словарь регулярных выражений
             handler: Обработчик событий (опционально)
         """
+        self.rules = rules
         self.handler = handler or EventHandler()
         self._current_block: Optional[dict] = None
         self._pending_lines: List[str] = []
@@ -93,7 +99,7 @@ class TraceLogParser:
             Распарсенные события по мере обработки
         """
         for line in lines:
-            block_match = RE_BLOCK_HEADER.match(line)
+            block_match = self.rules["block_header"].match(line)
             
             if block_match is not None:
                 if self._current_block is not None:
@@ -115,7 +121,7 @@ class TraceLogParser:
     
     def _process_line(self, line: str) -> None:
         """Обработка одной строки лога."""
-        block_match = RE_BLOCK_HEADER.match(line)
+        block_match = self.rules["block_header"].match(line)
         
         if block_match is not None:
             if self._current_block is not None:
@@ -134,7 +140,8 @@ class TraceLogParser:
         
         event = self.handler.handle(
             self._current_block,
-            self._pending_lines
+            self._pending_lines,
+            self.rules
         )
         
         if event:

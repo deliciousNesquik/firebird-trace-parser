@@ -1,11 +1,13 @@
 """Вспомогательные функции для парсера."""
 
-from typing import List, Optional
+from typing import Dict, List, Optional
+
+import regex
 from models import AttachmentInfo, TransactionInfo, SqlParam, PerformanceInfo
 from matcher import *
 
 
-def parse_attachment_info(body_lines: List[str]) -> Optional[AttachmentInfo]:
+def parse_attachment_info(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> Optional[AttachmentInfo]:
     """
     Парсит информацию о подключении.
     
@@ -21,7 +23,7 @@ def parse_attachment_info(body_lines: List[str]) -> Optional[AttachmentInfo]:
     
     for line in body_lines:
         # Attachment
-        m = RE_ATTACHMENT.match(line)
+        m = rules["attachment"].match(line)
         if m:
             attachment = AttachmentInfo(
                 database_path=m.group("database_path"),
@@ -38,7 +40,7 @@ def parse_attachment_info(body_lines: List[str]) -> Optional[AttachmentInfo]:
             continue
         
         # Process
-        m = RE_PROCESS.match(line)
+        m = rules["process"].match(line)
         if m:
             process_path = m.group("process_path")
             process_id = int(m.group("process_id"))
@@ -51,7 +53,7 @@ def parse_attachment_info(body_lines: List[str]) -> Optional[AttachmentInfo]:
     return attachment
 
 
-def parse_transaction_info(body_lines: List[str]) -> Optional[TransactionInfo]:
+def parse_transaction_info(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> Optional[TransactionInfo]:
     """
     Парсит информацию о транзакции.
     
@@ -62,7 +64,7 @@ def parse_transaction_info(body_lines: List[str]) -> Optional[TransactionInfo]:
         TransactionInfo или None
     """
     for line in body_lines:
-        m = RE_TRANSACTION.match(line)
+        m = rules["transaction"].match(line)
         if m:
             return TransactionInfo(
                 transaction_id=int(m.group("transaction_id")),
@@ -74,12 +76,13 @@ def parse_transaction_info(body_lines: List[str]) -> Optional[TransactionInfo]:
     return None
 
 
-def parse_params(body_lines: List[str]) -> List[SqlParam]:
+def parse_params(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> List[SqlParam]:
     """
     Парсит SQL параметры.
     
     Args:
         body_lines: Строки для парсинга
+        rules: Словарь регулярных выражений
         
     Returns:
         Список SqlParam
@@ -87,7 +90,7 @@ def parse_params(body_lines: List[str]) -> List[SqlParam]:
     params = []
     
     for line in body_lines:
-        m = RE_PARAM.match(line)
+        m = rules["parameters"].match(line)
         if m:
             params.append(
                 SqlParam(
@@ -100,12 +103,13 @@ def parse_params(body_lines: List[str]) -> List[SqlParam]:
     return params
 
 
-def parse_performance(body_lines: List[str]) -> Optional[PerformanceInfo]:
+def parse_performance(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> Optional[PerformanceInfo]:
     """
     Парсит информацию о производительности.
     
     Args:
         body_lines: Строки для парсинга
+        rules: Словарь регулярных выражений
         
     Returns:
         PerformanceInfo или None
@@ -114,12 +118,12 @@ def parse_performance(body_lines: List[str]) -> Optional[PerformanceInfo]:
     
     for line in body_lines:
         # Fetched count
-        m = RE_FETCHED.match(line)
+        m = rules["fetched"].match(line)
         if m:
             fetch_count = int(m.group("fetch_count"))
         
         # Performance metrics
-        m = RE_PERFORMANCE.match(line)
+        m = rules["performance"].match(line)
         if m:
             return PerformanceInfo(
                 execute_ms=int(m.group("execute_ms")),

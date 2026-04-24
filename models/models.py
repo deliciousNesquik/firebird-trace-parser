@@ -13,6 +13,7 @@ class TraceInitEvent(EventBase):
     Сигнализирует о старте глобальной сессии трассировки,
     после которой будут генерироваться другие события.
     """
+
     session: TraceSessionInfo
     """ Информация о глобальной trace‑сессии (идентификатор сессии). """
 
@@ -25,6 +26,7 @@ class TraceFinishEvent(EventBase):
     Сигнализирует о завершении глобальной сессии трассировки
     и остановке сбора событий.
     """
+
     session: TraceSessionInfo
     """Информация о глобальной trace‑сессии (идентификатор сессии)."""
 
@@ -37,8 +39,10 @@ class AttachDatabaseEvent(EventBase):
     Фиксирует факт подключения пользователя к базе данных
     в рамках trace‑сессии.
     """
+
     attachment: AttachmentInfo
     """Информация о подключении пользователя к базе данных."""
+
 
 @dataclass(slots=True)
 class DetachDatabaseEvent(EventBase):
@@ -48,6 +52,7 @@ class DetachDatabaseEvent(EventBase):
     Фиксирует факт завершения сессии подключения
     пользователя к базе данных.
     """
+
     attachment: AttachmentInfo
     """Информация о подключении пользователя к базе данных."""
 
@@ -60,6 +65,7 @@ class StatementEventBase(EventBase):
     Содержит общие поля для событий, связанных с выполнением
     SQL‑запросов (SELECT, INSERT, UPDATE, DELETE и т.п.).
     """
+
     attachment: AttachmentInfo
     """Информация о подключении пользователя к базе данных."""
 
@@ -75,6 +81,7 @@ class StatementEventBase(EventBase):
     params: List[SqlParam]
     """Список параметров SQL‑запроса."""
 
+
 @dataclass(slots=True)
 class ProcedureEventBase(EventBase):
     """
@@ -83,6 +90,7 @@ class ProcedureEventBase(EventBase):
     Содержит общие поля для событий, связанных с запуском
     хранимых процедур.
     """
+
     attachment: AttachmentInfo
     """Информация о подключении пользователя к базе данных."""
 
@@ -104,6 +112,7 @@ class TriggerEventBase(EventBase):
     Содержит общие поля для событий, связанных с выполнением
     триггеров на таблицах.
     """
+
     attachment: AttachmentInfo
     """Информация о подключении пользователя к базе данных."""
 
@@ -141,6 +150,7 @@ class StatementFinishEvent(StatementEventBase):
     Фиксирует момент завершения выполнения SQL‑запроса
     и содержит метрики производительности.
     """
+
     performance: PerformanceInfo
     """Общая информация о производительности выполнения SQL‑statement."""
 
@@ -166,6 +176,7 @@ class ProcedureFinishEvent(ProcedureEventBase):
     Фиксирует момент завершения выполнения хранимой процедуры
     и содержит метрики производительности.
     """
+
     performance: PerformanceInfo
     """Общая информация о производительности выполнения хранимой процедуры."""
 
@@ -191,6 +202,7 @@ class TriggerFinishEvent(TriggerEventBase):
     Фиксирует момент завершения выполнения триггера
     и содержит метрики производительности.
     """
+
     performance: PerformanceInfo
     """Общая информация о производительности выполнения триггера."""
 

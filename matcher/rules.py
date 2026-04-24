@@ -12,4 +12,5 @@ class RegexRule:
 
 class RuleConfigError(Exception):
     """Ошибка конфигурации regex-правил."""
+
     pass

@@ -7,20 +7,22 @@ from models import AttachmentInfo, TransactionInfo, SqlParam, PerformanceInfo
 from matcher import *
 
 
-def parse_attachment_info(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> Optional[AttachmentInfo]:
+def parse_attachment_info(
+    body_lines: List[str], rules: Dict[str, regex.Pattern]
+) -> Optional[AttachmentInfo]:
     """
     Парсит информацию о подключении.
-    
+
     Args:
         body_lines: Строки для парсинга
-        
+
     Returns:
         AttachmentInfo или None
     """
     attachment = None
     process_path = None
     process_id = None
-    
+
     for line in body_lines:
         # Attachment
         m = rules["attachment"].match(line)
@@ -38,28 +40,30 @@ def parse_attachment_info(body_lines: List[str], rules: Dict[str, regex.Pattern]
                 process_id=None,
             )
             continue
-        
+
         # Process
         m = rules["process"].match(line)
         if m:
             process_path = m.group("process_path")
             process_id = int(m.group("process_id"))
-    
+
     # Дополняем attachment процессом
     if attachment and (process_path or process_id):
         object.__setattr__(attachment, "process_path", process_path)
         object.__setattr__(attachment, "process_id", process_id)
-    
+
     return attachment
 
 
-def parse_transaction_info(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> Optional[TransactionInfo]:
+def parse_transaction_info(
+    body_lines: List[str], rules: Dict[str, regex.Pattern]
+) -> Optional[TransactionInfo]:
     """
     Парсит информацию о транзакции.
-    
+
     Args:
         body_lines: Строки для парсинга
-        
+
     Returns:
         TransactionInfo или None
     """
@@ -76,19 +80,21 @@ def parse_transaction_info(body_lines: List[str], rules: Dict[str, regex.Pattern
     return None
 
 
-def parse_params(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> List[SqlParam]:
+def parse_params(
+    body_lines: List[str], rules: Dict[str, regex.Pattern]
+) -> List[SqlParam]:
     """
     Парсит SQL параметры.
-    
+
     Args:
         body_lines: Строки для парсинга
         rules: Словарь регулярных выражений
-        
+
     Returns:
         Список SqlParam
     """
     params = []
-    
+
     for line in body_lines:
         m = rules["parameters"].match(line)
         if m:
@@ -99,29 +105,31 @@ def parse_params(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> List
                     value=m.group("value"),
                 )
             )
-    
+
     return params
 
 
-def parse_performance(body_lines: List[str], rules: Dict[str, regex.Pattern]) -> Optional[PerformanceInfo]:
+def parse_performance(
+    body_lines: List[str], rules: Dict[str, regex.Pattern]
+) -> Optional[PerformanceInfo]:
     """
     Парсит информацию о производительности.
-    
+
     Args:
         body_lines: Строки для парсинга
         rules: Словарь регулярных выражений
-        
+
     Returns:
         PerformanceInfo или None
     """
     fetch_count = 0
-    
+
     for line in body_lines:
         # Fetched count
         m = rules["fetched"].match(line)
         if m:
             fetch_count = int(m.group("fetch_count"))
-        
+
         # Performance metrics
         m = rules["performance"].match(line)
         if m:
@@ -132,5 +140,5 @@ def parse_performance(body_lines: List[str], rules: Dict[str, regex.Pattern]) ->
                 write_count=int(m.group("write") or 0),
                 mark_count=int(m.group("mark") or 0),
             )
-    
+
     return None

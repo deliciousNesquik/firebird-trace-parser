@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import tomllib
 import warnings
@@ -31,7 +30,9 @@ def _resolve_flags(flag_names: tuple[str, ...]) -> int:
     return flags
 
 
-def load_rules(config_path: str | Path, strict: bool = True) -> dict[str, regex.Pattern]:
+def load_rules(
+    config_path: str | Path, strict: bool = True
+) -> dict[str, regex.Pattern]:
     """
     Загружает regex-правила из TOML, валидирует их, компилирует и возвращает словарь:
         {rule_name: compiled_regex}
@@ -61,7 +62,9 @@ def load_rules(config_path: str | Path, strict: bool = True) -> dict[str, regex.
     for rule_name, rule_data in raw_rules.items():
         try:
             if "pattern" not in rule_data:
-                raise RuleConfigError(f"У правила '{rule_name}' отсутствует поле 'pattern'")
+                raise RuleConfigError(
+                    f"У правила '{rule_name}' отсутствует поле 'pattern'"
+                )
 
             spec = RegexRule(
                 pattern=rule_data["pattern"],
@@ -80,9 +83,7 @@ def load_rules(config_path: str | Path, strict: bool = True) -> dict[str, regex.
                 )
 
             if spec.sample and rx.search(spec.sample) is None:
-                raise RuleConfigError(
-                    f"Правило '{rule_name}' не совпадает с sample"
-                )
+                raise RuleConfigError(f"Правило '{rule_name}' не совпадает с sample")
 
             compiled[rule_name] = rx
 

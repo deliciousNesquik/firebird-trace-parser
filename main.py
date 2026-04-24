@@ -1,17 +1,19 @@
+import os
+
 from parser import TraceLogParser
-from models import StatementFinishEvent
+from matcher import loader
 
-parser = TraceLogParser()
-events = parser.parse_file("examples/trace.log")
+rules = loader.load_rules(
+    "C:\\Users\\BERDIN.A\\PycharmProjects\\firebird-trace-parser\\matcher\\rules.toml"
+)
+parser = TraceLogParser(rules)
 
-# Найти запросы выполняющиеся дольше 1 секунды
-slow_queries = [
-    event for event in events
-    if isinstance(event, StatementFinishEvent)
-    and event.performance.execute_ms > 100000
-]
 
-for query in slow_queries:
-    print(f"Время: {query.performance.execute_ms} мс")
-    print(f"SQL: {query.sql[:100]}...")
-    print("-" * 50)
+users = {}
+# Обработка файла построчно (экономия памяти)
+files = os.listdir("examples/")
+
+for file in files[4:6]:
+    with open(f"examples/{file}", "r", errors="ignore", encoding="utf-8") as f:
+        for event in parser.parse_stream(f):
+            pass

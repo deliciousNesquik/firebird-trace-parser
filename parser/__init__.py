@@ -5,7 +5,7 @@
 trace логов сервера Firebird.
 """
 
-__description__= "Firebird trace log parser"
+__description__ = "Firebird trace log parser"
 __version__ = "0.1.0"
 
 from parser.engine import TraceLogParser

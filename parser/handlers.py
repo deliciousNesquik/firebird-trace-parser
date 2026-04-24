@@ -47,12 +47,18 @@ class EventHandler:
             EventType.EXECUTE_TRIGGER_START: self._handle_trigger_start,
             EventType.EXECUTE_TRIGGER_FINISH: self._handle_trigger_finish,
         }
-        
-        handler_func = handlers.get(EventType(event_type))
-        if handler_func:
-            return handler_func(block_header, body_lines, rules)
-        
-        return None
+
+        try:
+            event_type_enum = EventType(event_type)  # теперь здесь
+            handler_func = handlers.get(event_type_enum)
+            if handler_func:
+                return handler_func(block_header, body_lines, rules)
+
+            # print(f"Нет обработчика для события: {event_type}")
+            return None
+        except ValueError:
+            print(f"Неизвестное событие: {event_type}")
+            return None  # или вернуть placeholder‑событие
     
     def _create_base_kwargs(self, block_header: Dict[str, Any]) -> Dict[str, Any]:
         """Создает базовые аргументы для события."""

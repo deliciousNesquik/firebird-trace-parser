@@ -6,4 +6,7 @@ requires-python = ">=3.12"
 authors = [
     {name = "deliciousNesquik", email = "byte.in4matic@gmail.com"}
 ]
-dependencies = []
+dependencies = [
+    "regex>=2026.4.4",
+    "regexp>=0.1",
+]

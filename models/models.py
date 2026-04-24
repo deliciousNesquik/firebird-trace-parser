@@ -60,7 +60,7 @@ class StatementStartEvent(StatementEventBase):
 @dataclass(slots=True)
 class StatementFinishEvent(StatementEventBase):
     performance: PerformanceInfo
-    performance_table: PerfomanceTable
+    performance_table: PerformanceTable
 
 
 @dataclass(slots=True)
@@ -71,7 +71,7 @@ class ProcedureStartEvent(ProcedureEventBase):
 @dataclass(slots=True)
 class ProcedureFinishEvent(ProcedureEventBase):
     performance: PerformanceInfo
-    performance_table: PerfomanceTable
+    performance_table: PerformanceTable
 
 
 @dataclass(slots=True)
@@ -82,4 +82,4 @@ class TriggerStartEvent(TriggerEventBase):
 @dataclass(slots=True)
 class TriggerFinishEvent(TriggerEventBase):
     performance: PerformanceInfo
-    performance_table: PerfomanceTable
+    performance_table: PerformanceTable

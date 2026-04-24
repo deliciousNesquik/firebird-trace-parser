@@ -7,9 +7,9 @@ from models.enums import (
     AttachmentInfo,
     TransactionInfo,
     SqlParam,
-    PerfomanceTable,
+    PerformanceTable,
     PerformanceInfo,
-    PerfomanceTableItem,
+    PerformanceTableItem,
 )
 from models.models import (
     TraceInitEvent,
@@ -32,8 +32,8 @@ __all__ = [
     "TransactionInfo",
     "SqlParam",
     "PerformanceInfo",
-    "PerfomanceTableItem",
-    "PerfomanceTable",
+    "PerformanceTableItem",
+    "PerformanceTable",
     
     "TraceInitEvent",
     "TraceFinishEvent",

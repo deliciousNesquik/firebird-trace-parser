@@ -28,6 +28,7 @@ class EventHandler:
         Args:
             block_header: Заголовок блока
             body_lines: Строки тела блока
+            rules: Словарь правил поиска
 
         Returns:
             Объект события или None
@@ -60,7 +61,8 @@ class EventHandler:
             print(f"Неизвестное событие: {event_type}")
             return None  # или вернуть placeholder‑событие
 
-    def _create_base_kwargs(self, block_header: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def _create_base_kwargs(block_header: Dict[str, Any]) -> Dict[str, Any]:
         """Создает базовые аргументы для события."""
         return {
             "timestamp": datetime.fromisoformat(block_header["ts"]),
@@ -149,7 +151,7 @@ class EventHandler:
     ) -> Optional[ProcedureStartEvent]:
         """Обработка EXECUTE_PROCEDURE_START."""
         base_kwargs = self._create_base_kwargs(block_header)
-        data = self._parse_procedure_data(body_lines)
+        data = self._parse_procedure_data(body_lines, rules)
 
         return ProcedureStartEvent(**base_kwargs, **data)
 
@@ -173,7 +175,7 @@ class EventHandler:
     ) -> Optional[TriggerStartEvent]:
         """Обработка EXECUTE_TRIGGER_START."""
         base_kwargs = self._create_base_kwargs(block_header)
-        data = self._parse_trigger_data(body_lines)
+        data = self._parse_trigger_data(body_lines, rules)
 
         return TriggerStartEvent(**base_kwargs, **data)
 
@@ -189,8 +191,9 @@ class EventHandler:
 
         return TriggerFinishEvent(**base_kwargs, **data)
 
+    @staticmethod
     def _parse_session_info(
-        self, body_lines: List[str], rules: Dict[str, regex.Pattern]
+        body_lines: List[str], rules: Dict[str, regex.Pattern]
     ) -> Optional[TraceSessionInfo]:
         """Парсит информацию о сессии."""
         for line in body_lines:
@@ -199,8 +202,8 @@ class EventHandler:
                 return TraceSessionInfo(session_id=int(m.group("session_id")))
         return None
 
+    @staticmethod
     def _parse_statement_data(
-        self,
         body_lines: List[str],
         rules: Dict[str, regex.Pattern],
         include_performance: bool = False,
@@ -290,8 +293,8 @@ class EventHandler:
 
         return result
 
+    @staticmethod
     def _parse_procedure_data(
-        self,
         body_lines: List[str],
         rules: Dict[str, regex.Pattern],
         include_performance: bool = False,
@@ -321,8 +324,8 @@ class EventHandler:
 
         return result
 
+    @staticmethod
     def _parse_trigger_data(
-        self,
         body_lines: List[str],
         rules: Dict[str, regex.Pattern],
         include_performance: bool = False,

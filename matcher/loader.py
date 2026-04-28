@@ -125,7 +125,7 @@ def _validate_config(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 def _compile_rules(
-        raw_rules: dict[str, dict[str, Any]], strict: bool = True
+    raw_rules: dict[str, dict[str, Any]], strict: bool = True
 ) -> dict[str, regex.Pattern]:
     """Оптимизирована: кэш флагов, батчинг sample-тестов."""
     compiled: dict[str, regex.Pattern] = {}
@@ -193,9 +193,12 @@ def load_rules(
 
 # Кэшированная глобальная загрузка (для многократных вызовов)
 @lru_cache(maxsize=1)  # Единственный файл — maxsize=1
-def load_rules_cached(config_path: str | Path, strict: bool = True) -> dict[str, regex.Pattern]:
+def load_rules_cached(
+    config_path: str | Path, strict: bool = True
+) -> dict[str, regex.Pattern]:
     """Кэшированная версия для повторных загрузок (например, в тестах/сервисе)."""
     return load_rules(config_path, strict)
+
 
 if __name__ == "__main__":
     rules = load_rules("rules.toml")

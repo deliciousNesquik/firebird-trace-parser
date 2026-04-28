@@ -68,17 +68,11 @@ required_groups = ['name', 'dtype', 'value', 'value_null']
 
 
 [rules.transaction]
-pattern = '''
-^\s*\(TRA_(?<transaction_id>\d+),\s*
-(?<isolation>[^|)]+)
-(?:\s*\|\s*(?<consistency>[^|)]+))?
-(?:\s*\|\s*(?<lock>[^|)]+))?
-(?:\s*\|\s*(?<access>[^|)]+))?
-\s*\)
-'''
+
+pattern = '^\s*\(TRA_(\d+),\s*(.*?)\)'
 description = 'Регулярное выражение для извлечения информации о транзакции.'
 sample = '(TRA_123, READ_COMMITTED | READ_CONSISTENCY | NOWAIT | READ_WRITE)'
-required_groups = ['transaction_id', 'isolation', 'consistency', 'lock', 'access']
+required_groups = []
 
 
 [rules.performance]

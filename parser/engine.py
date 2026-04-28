@@ -98,6 +98,8 @@ class TraceLogParser:
         Yields:
             Распарсенные события по мере обработки
         """
+        batch = []
+
         for line in lines:
             block_match = self.rules["block_header"].match(line)
 
@@ -105,13 +107,19 @@ class TraceLogParser:
                 if self._current_block is not None:
                     event = self._flush_block()
                     if event:
-                        yield event
+                        batch.append(event)
+                        if len(batch) >= 256:
+                            yield from batch
+                            batch.clear()
+                        # yield event
 
                 self._current_block = block_match.groupdict()
                 self._pending_lines = []
             else:
-                if self._current_block is not None and line.strip():
+                if self._current_block is not None and not line.isspace():
                     self._pending_lines.append(line)
+        if batch:
+            yield from batch
 
         # Последний блок
         if self._current_block is not None:
@@ -130,7 +138,7 @@ class TraceLogParser:
             self._current_block = block_match.groupdict()
             self._pending_lines = []
         else:
-            if self._current_block is not None and line.strip():
+            if self._current_block is not None and not line.isspace():
                 self._pending_lines.append(line)
 
     def _flush_block(self) -> Optional[EventBase]:

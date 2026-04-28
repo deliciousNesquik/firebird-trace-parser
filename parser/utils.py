@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 import regex
 from models import AttachmentInfo, TransactionInfo, SqlParam, PerformanceInfo
-from matcher import *
 
 
 def parse_attachment_info(
@@ -15,6 +14,7 @@ def parse_attachment_info(
 
     Args:
         body_lines: Строки для парсинга
+        rules: Словарь правил поиска
 
     Returns:
         AttachmentInfo или None
@@ -57,26 +57,37 @@ def parse_attachment_info(
 
 def parse_transaction_info(
     body_lines: List[str], rules: Dict[str, regex.Pattern]
-) -> Optional[TransactionInfo]:
-    """
-    Парсит информацию о транзакции.
-
-    Args:
-        body_lines: Строки для парсинга
-
-    Returns:
-        TransactionInfo или None
-    """
+) -> Optional["TransactionInfo"]:
     for line in body_lines:
-        m = rules["transaction"].match(line)
-        if m:
-            return TransactionInfo(
-                transaction_id=int(m.group("transaction_id")),
-                isolation_level=(m.group("isolation") or "").strip(),
-                consistency_mode=(m.group("consistency") or "").strip() or None,
-                lock_mode=(m.group("lock") or "").strip() or None,
-                access_mode=(m.group("access") or "").strip() or None,
-            )
+        # Быстрый фильтр без regex
+        if "(TRA_" not in line:
+            continue
+
+        # Извлекаем ID и сырую строку параметров
+        match = rules['transaction'].match(line)
+        if not match:
+            continue
+
+        tid = int(match.group(1))
+        raw_params = match.group(2)
+
+        # Разбиваем по '|', чистим, отбрасываем явные None/пустоты
+        parts = [
+            p.strip().upper()
+            for p in raw_params.split('|')
+            if p.strip() and p.strip().upper() not in ('NONE', '(NONE)')
+        ]
+
+        # Гарантируем ровно 4 позиции (FB5 порядок фиксирован)
+        parts += [None] * (4 - len(parts))
+
+        return TransactionInfo(
+            transaction_id=tid,
+            isolation_level=parts[0],
+            consistency_mode=parts[1],
+            lock_mode=parts[2],
+            access_mode=parts[3],
+        )
     return None
 
 

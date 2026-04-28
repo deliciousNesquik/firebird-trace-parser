@@ -15,6 +15,7 @@ FLAG_MAP = {
 }
 
 DEFAULT_FLAGS = ("VERBOSE",)
+SCHEMA_VERSION = 1
 
 
 def _resolve_flags(flag_names: tuple[str, ...]) -> int:
@@ -50,7 +51,7 @@ def load_rules(
         raise RuleConfigError(f"Ошибка TOML в файле {path}: {exc}") from exc
 
     schema_version = data.get("schema_version")
-    if schema_version != 1:
+    if schema_version != SCHEMA_VERSION:
         raise RuleConfigError(f"Неподдерживаемая schema_version: {schema_version}")
 
     raw_rules = data.get("rules")
